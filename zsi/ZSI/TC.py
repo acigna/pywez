@@ -213,15 +213,8 @@ class TypeCode:
 
         # Parse the QNAME.
         prefix,typeName = SplitQName(typeName)
-        nsdict = ps.GetElementNSdict(elt)
-        prefix = prefix or ''
-
-        try:
-            uri = nsdict[prefix]
-        except KeyError, ex:
-            raise EvaluateException('cannot resolve prefix(%s)'%prefix,
-                ps.Backtrace(elt))
-
+        # Use '' for default namespace with ParsedSoap
+        uri = ps.GetElementNSdict(elt).get(prefix or '')
         if uri is None:
             raise EvaluateException('Malformed type attribute (bad NS)',
                     ps.Backtrace(elt))

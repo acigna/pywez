@@ -251,6 +251,9 @@ def _resolve_prefix(celt, prefix):
     else:
         if prefix:  
             raise EvaluateException, 'cant resolve xmlns:%s' %prefix
+        else:
+            raise EvaluateException, 'cant resolve default namespace'
+
     return namespaceURI
 
 def _valid_encoding(elt):

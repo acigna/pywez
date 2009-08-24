@@ -186,6 +186,7 @@ test_Racing = wsdl/Racing.wsdl
 test_NVOAdmin = wsdl/nvo-admin.wsdl
 test_Clearspace = http://eval.jivesoftware.com/clearspace/rpc/soap/BlogService?wsdl
 test_VIM = wsdl/vim.wsdl
+test_VIM25 = wsdl/vim25/vimService.wsdl
 
 test_NoMessagePart = wsdl/NoMessagePart.wsdl
 

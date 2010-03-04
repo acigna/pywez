@@ -1648,7 +1648,7 @@ class MethodFailed(Exception):
 
 def simplify(object, level=0):
     """
-    Convert the SOAPpy objects and thier contents to simple python types.
+    Convert the SOAPpy objects and their contents to simple python types.
 
     This function recursively converts the passed 'container' object,
     and all public subobjects. (Private subobjects have names that

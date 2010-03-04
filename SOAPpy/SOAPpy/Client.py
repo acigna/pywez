@@ -41,8 +41,8 @@ from __future__ import nested_scopes
 #
 ################################################################################
 """
-
 ident = '$Id$'
+
 from version import __version__
 
 #import xml.sax
@@ -50,6 +50,8 @@ import urllib
 from types import *
 import re
 import base64
+import socket, httplib
+from httplib import HTTPConnection, HTTP
 import Cookie
 
 # SOAPpy modules
@@ -111,6 +113,39 @@ class SOAPAddress:
 
     __repr__ = __str__
 
+class SOAPTimeoutError(socket.timeout):
+    '''This exception is raised when a timeout occurs in SOAP operations'''
+    pass
+
+class HTTPConnectionWithTimeout(HTTPConnection):
+    '''Extend HTTPConnection for timeout support'''
+
+    def __init__(self, host, port=None, strict=None, timeout=None):
+        HTTPConnection.__init__(self, host, port, strict)
+        self._timeout = timeout
+
+    def connect(self):
+        HTTPConnection.connect(self)
+        if self.sock and self._timeout:
+            self.sock.settimeout(self._timeout) 
+
+
+class HTTPWithTimeout(HTTP):
+
+    _connection_class = HTTPConnectionWithTimeout
+
+    ## this __init__ copied from httplib.HTML class
+    def __init__(self, host='', port=None, strict=None, timeout=None):
+        "Provide a default host, since the superclass requires one."
+
+        # some joker passed 0 explicitly, meaning default port
+        if port == 0:
+            port = None
+
+        # Note that we may pass an empty string as the host; this will throw
+        # an error when we attempt to connect. Presumably, the client code
+        # will call connect before then, with a proper host.
+        self._setup(self._connection_class(host, port, strict, timeout))
 
 class HTTPTransport:
             
@@ -149,11 +184,8 @@ class HTTPTransport:
                 attrs.append('$Domain=%s' % value)
             r.putheader('Cookie', "; ".join(attrs))
     
-    # Need a Timeout someday?
     def call(self, addr, data, namespace, soapaction = None, encoding = None,
-        http_proxy = None, config = Config):
-
-        import httplib
+        http_proxy = None, config = Config, timeout=None):
 
         if not isinstance(addr, SOAPAddress):
             addr = SOAPAddress(addr, config)
@@ -172,7 +204,7 @@ class HTTPTransport:
         elif addr.proto == 'https':
             r = httplib.HTTPS(real_addr)
         else:
-            r = httplib.HTTP(real_addr)
+            r = HTTPWithTimeout(real_addr, timeout=timeout)
 
         r.putrequest("POST", real_path)
 
@@ -309,7 +341,7 @@ class SOAPProxy:
                  header = None, methodattrs = None, transport = HTTPTransport,
                  encoding = 'UTF-8', throw_faults = 1, unwrap_results = None,
                  http_proxy=None, config = Config, noroot = 0,
-                 simplify_objects=None):
+                 simplify_objects=None, timeout=None):
 
         # Test the encoding, raising an exception if it's not known
         if encoding != None:
@@ -338,6 +370,7 @@ class SOAPProxy:
         self.http_proxy     = http_proxy
         self.config         = config
         self.noroot         = noroot
+        self.timeout        = timeout
 
         # GSI Additions
         if hasattr(config, "channel_mode") and \
@@ -385,11 +418,14 @@ class SOAPProxy:
 
         call_retry = 0
         try:
-
             r, self.namespace = self.transport.call(self.proxy, m, ns, sa,
                                                     encoding = self.encoding,
-                                                 http_proxy = self.http_proxy,
-                                                    config = self.config)
+                                                    http_proxy = self.http_proxy,
+                                                    config = self.config,
+                                                    timeout = self.timeout)
+
+        except socket.timeout:
+            raise SOAPTimeoutError
 
         except Exception, ex:
             #
@@ -415,10 +451,14 @@ class SOAPProxy:
                 raise
 
         if call_retry:
-            r, self.namespace = self.transport.call(self.proxy, m, ns, sa,
-                                                    encoding = self.encoding,
-                                                    http_proxy = self.http_proxy,
-                                                    config = self.config)
+            try:
+                r, self.namespace = self.transport.call(self.proxy, m, ns, sa,
+                                                        encoding = self.encoding,
+                                                        http_proxy = self.http_proxy,
+                                                        config = self.config,
+                                                        timeout = self.timeout)
+            except socket.timeout:
+                raise SOAPTimeoutError
             
 
         p, attrs = parseSOAPRPC(r, attrs = 1)
@@ -465,11 +505,12 @@ class SOAPProxy:
         return self.__call(None, body, {})
 
     def __getattr__(self, name):  # hook to catch method calls
-        if name == '__del__':
+        if name in ( '__del__', '__getinitargs__', '__getnewargs__',
+           '__getstate__', '__setstate__', '__reduce__', '__reduce_ex__'):
             raise AttributeError, name
         return self.__Method(self.__call, name, config = self.config)
 
-    # To handle attribute wierdness
+    # To handle attribute weirdness
     class __Method:
         # Some magic to bind a SOAP method to an RPC server.
         # Supports "nested" methods (e.g. examples.getStateName) -- concept

@@ -820,9 +820,6 @@ class SOAPParser(xml.sax.handler.ContentHandler):
     zerofloatre = '[1-9]'
 
 
-
-
-
     def convertType(self, d, t, attrs, config=Config):
         if t[0] is None and t[1] is not None:
             type = t[1].strip()

@@ -497,6 +497,17 @@ class SOAPBuilder:
 
     dump_tuple = dump_list
 
+    def dump_exception(self, obj, tag, typed = 0, ns_map = {}):
+        if isinstance(obj, faultType):    # Fault
+            cns, cdecl = self.genns(ns_map, NS.ENC)
+            vns, vdecl = self.genns(ns_map, NS.ENV)
+            self.out.append('<%sFault %sroot="1"%s%s>' % (vns, cns, vdecl, cdecl))
+            self.dump(obj.faultcode, "faultcode", typed, ns_map)
+            self.dump(obj.faultstring, "faultstring", typed, ns_map)
+            if hasattr(obj, "detail"):
+                self.dump(obj.detail, "detail", typed, ns_map)
+            self.out.append("</%sFault>\n" % vns)
+
     def dump_dictionary(self, obj, tag, typed = 1, ns_map = {}):
         if Config.debug: print "In dump_dictionary."
         tag = tag or self.gentag()
@@ -521,31 +532,6 @@ class SOAPBuilder:
     dump_dict = dump_dictionary # For Python 2.2+
 
     def dump_dispatch(self, obj, tag, typed = 1, ns_map = {}):
-        # watch out for order! 
-        dumpmap = (
-            (basestring, self.dump_string),
-            (NoneType, self.dump_None),
-            (bool, self.dump_bool),
-            (int, self.dump_int),
-            (long, self.dump_int),
-            (list, self.dump_list),
-            (dict, self.dump_dictionary),
-            (float, self.dump_float),
-        )
-        for dtype, func in dumpmap:
-            if isinstance(obj, dtype):
-                func(obj, tag, typed, ns_map)
-                return
-
-        try:
-            iter(obj)
-        except TypeError:
-            pass
-        else:
-            self.dump_list(obj, tag, typed, ns_map)
-            return
-
-
         if not tag:
             # If it has a name use it.
             if isinstance(obj, anyType) and obj._name:
@@ -553,19 +539,24 @@ class SOAPBuilder:
             else:
                 tag = self.gentag()
 
-        if isinstance(obj, arrayType):      # Array
-            self.dump_list(obj, tag, typed, ns_map)
-            return
-        elif isinstance(obj, faultType):    # Fault
-            cns, cdecl = self.genns(ns_map, NS.ENC)
-            vns, vdecl = self.genns(ns_map, NS.ENV)
-            self.out.append('<%sFault %sroot="1"%s%s>' % (vns, cns, vdecl, cdecl))
-            self.dump(obj.faultcode, "faultcode", typed, ns_map)
-            self.dump(obj.faultstring, "faultstring", typed, ns_map)
-            if hasattr(obj, "detail"):
-                self.dump(obj.detail, "detail", typed, ns_map)
-            self.out.append("</%sFault>\n" % vns)
-            return
+        # watch out for order! 
+        dumpmap = (
+            (Exception, self.dump_exception),
+            (arrayType, self.dump_list),
+            (basestring, self.dump_string),
+            (NoneType, self.dump_None),
+            (bool, self.dump_bool),
+            (int, self.dump_int),
+            (long, self.dump_int),
+            (list, self.dump_list),
+            (tuple, self.dump_list),
+            (dict, self.dump_dictionary),
+            (float, self.dump_float),
+        )
+        for dtype, func in dumpmap:
+            if isinstance(obj, dtype):
+                func(obj, tag, typed, ns_map)
+                return
 
         r = self.genroot(ns_map)
 

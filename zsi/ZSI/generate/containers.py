@@ -1565,8 +1565,9 @@ class TypecodeContainerBase(TypesContainerBase):
         #    because cannot follow references, but not currently
         #    a big concern. 
         
-        self.logger.debug("flat: %r" %list(flat))
+        #self.logger.debug("flat: %r" %list(flat))
         for c in flat:
+            self.logger.debug("flat: %r" %c)
             tc = TcListComponentContainer()
             # TODO: Remove _getOccurs
             min,max,nil = self._getOccurs(c)
@@ -1609,9 +1610,13 @@ class TypecodeContainerBase(TypesContainerBase):
                 
                 if parent.isReference():
                     parent = parent.getModelGroupReference()
-                    
+                    continue
+
                 if parent.isDefinition():
                     parent = parent.content       
+                    continue
+
+                break
             
             tc.setOccurs(minOccurs, maxOccurs, nil)
             processContents = self._getProcessContents(c)
@@ -2804,8 +2809,13 @@ class RestrictionContainer(SimpleTypeContainer):
                 raise Wsdl2PythonError('no built-in type nor schema instance type for base attribute("%s","%s"): %s' %(
                     base.getTargetNamespace(), base.getName(), tp.getItemTrace()))
 
-            raise Wsdl2PythonError, \
-                'Not Supporting simpleType/Restriction w/User-Defined Base: %s %s' %(tp.getItemTrace(),item.getItemTrace())
+            warnings.warn('Using string for simpleType/Restriction w/User-Defined Base: %s %s' %(tp.getItemTrace(),item.getItemTrace()))
+
+            self.logger.warning("Unsupported: SimpleType  (%s,%s), setting restriction base to xsd:string" %(self.ns, self.name))
+            #self.sKlass = "%s.%s" %(base.getName(), base.getTargetNamespace())
+            self.sKlass = BTI.get_typeclass("string", SCHEMA.XSD3)
+
+            return
 
         sc = tp.content.getSimpleTypeContent()
         if sc is not None and True is sc.isSimple() is sc.isLocal() is sc.isDefinition():

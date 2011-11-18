@@ -12,7 +12,7 @@ import ZSI
 from ConfigParser import ConfigParser
 from ZSI.generate.wsdl2python import WriteServiceModule, ServiceDescription as wsdl2pyServiceDescription
 from ZSI.wstools import WSDLTools, XMLSchema
-from ZSI.wstools.logging import setBasicLoggerDEBUG
+from ZSI.wstools.logging import setBasicLoggerDEBUG,setBasicLoggerWARN
 from ZSI.generate import containers, utility
 from ZSI.generate.utility import NCName_to_ClassName as NC_to_CN, TextProtect
 from ZSI.generate.wsdl2dispatch import ServiceModuleWriter as ServiceDescription
@@ -110,7 +110,7 @@ def wsdl2py(args=None):
                   action="store_true", dest="pydoc", default=False,
                   help="top-level directory for pydoc documentation.")
     
-    
+    setBasicLoggerWARN()    
     is_cmdline = args is None
     if is_cmdline:
         (options, args) = op.parse_args()

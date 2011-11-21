@@ -1211,6 +1211,7 @@ class XMLSchema(XMLSchemaComponent):
                     slocd[import_ns] = schema
                     try:
                         tp.loadSchema(schema)
+                        """
                     except NoSchemaLocationWarning, ex:
                         # Dependency declaration, hopefully implementation
                         # is aware of this namespace (eg. SOAP,WSDL,?)
@@ -1219,6 +1220,8 @@ class XMLSchema(XMLSchemaComponent):
                         del slocd[import_ns]
                         continue
                     except SchemaError, ex:
+                        """
+                    except (NoSchemaLocationWarning,SchemaError), ex:
                         #warnings.warn(\
                         #    '<import namespace="%s" schemaLocation=?>, %s'\
                         #    %(import_ns, 'failed to load schema instance')

@@ -11,7 +11,7 @@ IN='''<SOAP-ENV:Envelope
  xmlns:ZSI="http://www.zolera.com/schemas/ZSI/">
  <SOAP-ENV:Body>
  <hreftest>
-    <xmltest href="http://www-itg.lbl.gov/~kjackson/zsi.xsd"/>
+    <xmltest href="http://pywebsvcs.sourceforge.net/zsi.xsd"/>
     <stringtest href="http://www.microsoft.com"/>
  </hreftest>
  </SOAP-ENV:Body>

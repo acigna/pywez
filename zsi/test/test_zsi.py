@@ -26,4 +26,5 @@ def main():
     unittest.main(defaultTest="makeTestSuite")
     suite = unittest.TestSuite()
 
-if __name__ == "__main__" : main()
+if __name__ == "__main__":
+    main()

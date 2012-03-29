@@ -3,10 +3,16 @@
 '''SOAP messaging parsing.
 '''
 
-from ZSI import _copyright, _child_elements, EvaluateException, TC
-import multifile, mimetools, urllib
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
+import multifile
+import mimetools
+import urllib
 from base64 import decodestring as b64decode
-import cStringIO as StringIO
+
+from ZSI import _copyright, _child_elements, EvaluateException, TC
 
 
 def Opaque(uri, tc, ps, **keywords):

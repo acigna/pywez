@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-import unittest, sys, tests_good, tests_bad, time
-from ZSI import *
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+
+import unittest
+
+from ZSI import schema, ParsedSoap, TC
 
 """Bug [ 1520092 ] URI Bug: urllib.quote escaping reserved chars
    Bug [ 2748314 ] Malformed type attribute (bad NS) with 2.1a1 but not with 2.

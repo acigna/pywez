@@ -1,11 +1,8 @@
 #!/usr/bin/env python
-import unittest, sys, tests_good, tests_bad, time
-from ZSI import *
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
 
+import unittest
+
+from ZSI import ParsedSoap, TC, FaultFromFaultMessage
 
 """Bug [ 1520092 ] URI Bug: urllib.quote escaping reserved chars
    Bug [ 2748314 ] Malformed type attribute (bad NS) with 2.1a1 but not with 2.
@@ -33,7 +30,6 @@ class TestCase(unittest.TestCase):
 </soapenv:Body>
 </soapenv:Envelope>"""
 
-        from ZSI import ParsedSoap, FaultFromFaultMessage
         ps = ParsedSoap(msg)
         fault = FaultFromFaultMessage(ps)
         self.failUnless(fault.code == ('','ServerFaultCode'), 'faultcode should be (namespace,name) tuple')

@@ -1,12 +1,15 @@
 #!/usr/bin/env python
-import unittest, sys, sha, base64
+import base64
+import unittest
+import sys
+from cStringIO import StringIO
+
 import ZSI 
 from ZSI import _get_element_nsuri_name
 from ZSI.schema import GED, TypeDefinition, ElementDeclaration
 from ZSI.parse import ParsedSoap
 from ZSI.wstools.c14n import Canonicalize
 from ZSI.wstools.Namespaces import WSA200403, SOAP
-from cStringIO import StringIO
 
 # 
 # Generated code

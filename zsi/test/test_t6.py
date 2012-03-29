@@ -1,6 +1,11 @@
 #!/usr/bin/env python
-import unittest, sys, multifile, mimetools, base64
-from ZSI import *
+import unittest
+import sys
+import multifile
+import mimetools
+import base64
+
+from ZSI import TC, ParseException, FaultFromException, ParsedSoap
 from ZSI import resolvers
 try:
     import cStringIO as StringIO
@@ -34,16 +39,16 @@ class t6TestCase(unittest.TestCase):
 
         self.failUnlessEqual(dict['stringtest'], strExtTest, 
                             "Failed to extract stringtest correctly")
-        print base64.encodestring(cid['partii@zolera.com'].read()) 
+        #print base64.encodestring(cid['partii@zolera.com'].read()) 
         v = dict['b64']
-        print type(v), 'is type(v)' 
+        #print type(v), 'is type(v)' 
         self.failUnlessEqual(cid['partii@zolera.com'].getvalue(), v,
                                     "mismatch")
-        print base64.encodestring(v)             
-        from ZSI.wstools.c14n import Canonicalize 
-        z = dict['xmltest'] 
-        print type(z), z 
-        print Canonicalize(z)
+        #print base64.encodestring(v)             
+        #from ZSI.wstools.c14n import Canonicalize 
+        #z = dict['xmltest'] 
+        #print type(z), z 
+        #print Canonicalize(z)
 
 def makeTestSuite():
     suite = unittest.TestSuite()

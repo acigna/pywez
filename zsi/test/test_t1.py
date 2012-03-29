@@ -1,10 +1,17 @@
 #!/usr/bin/env python
-import unittest, sys, tests_good, tests_bad, time
-from ZSI import *
 try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
+import unittest
+import sys
+import time
+
+from ZSI import *
+
+import tests_good
+import tests_bad
+
 
 class t1TestCase(unittest.TestCase):
     "Test case wrapper for old ZSI t1 test case"
@@ -35,10 +42,10 @@ class t1TestCase(unittest.TestCase):
 
     def checkt1(self):
         for key,val in self.badTests:
-            print "\n", "." * 60, key
+            #print "\n", "." * 60, key
             self.failUnlessRaises(ParseException, ParsedSoap, val)
         for key,val in self.goodTests:
-            print "\n", "." * 60, key
+            #print "\n", "." * 60, key
             ps = ParsedSoap(val)
 
         ps = ParsedSoap(datatest)
@@ -141,13 +148,13 @@ class t1TestCase(unittest.TestCase):
             a = bar() 
         except Exception, e: 
             f = FaultFromException(e, 0, sys.exc_info()[2]) 
-            print f.AsSOAP() 
-        print
-        print
-        print FaultFromNotUnderstood('myuri', 'dalocalname', actor='cher').AsSOAP() 
-        print
-        print
-        print FaultFromActor('actor:i:dont:understand').AsSOAP()
+            #print f.AsSOAP() 
+        #print
+        #print
+        #print FaultFromNotUnderstood('myuri', 'dalocalname', actor='cher').AsSOAP() 
+        #print
+        #print
+        #print FaultFromActor('actor:i:dont:understand').AsSOAP()
 
 
 def makeTestSuite():
@@ -163,12 +170,15 @@ def foo():
 def bar():
     return foo() + 2
 
-class zParseException: pass
+class zParseException:
+    pass
 
 class myclass:
+    
     def __init__(self, name=None):
         self.name = name or id(self)
         self.z = 'z value'
+        
     def __str__(self):
         return 'myclass-%s-(%d,"%s")' % (self.name, self.i, self.t) + \
                                                         str(self.z)
@@ -229,7 +239,7 @@ datatest = '''<SOAP-ENV:Envelope
 def main():
     unittest.main(defaultTest="makeTestSuite")
 
-
-if __name__ == "__main__" : main()
+if __name__ == "__main__" :
+    main()
 
 

@@ -32,7 +32,7 @@ class t4TestCase(unittest.TestCase):
             # Faulted while processing; assume it's in the header.  
             print >>OUT, FaultFromException(e, 1, sys.exc_info()[2]).AsSOAP() 
             self.fail() 
-        print 'resolving' 
+        #print 'resolving' 
         typecode = TC.Struct(None, [ TC.XML('xmltest'), 
                            TC.String('stringtest', resolver=r.Opaque), ]) 
         try: 
@@ -45,7 +45,7 @@ class t4TestCase(unittest.TestCase):
             print >>OUT, FaultFromException(e, 0, sys.exc_info()[2]).AsSOAP() 
             self.fail() 
         ##PrettyPrint(dict['xmltest']) 
-        print '**', dict['stringtest'], '**'
+        #print '**', dict['stringtest'], '**'
 
 def makeTestSuite():
     suite = unittest.TestSuite()

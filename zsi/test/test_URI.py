@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-import unittest, sys, tests_good, tests_bad, time
-from ZSI import *
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import unittest
+
+from ZSI import ParsedSoap, SoapWriter, TC
 
 
 """Bug [ 1520092 ] URI Bug: urllib.quote escaping reserved chars
@@ -45,8 +42,8 @@ class TestCase(unittest.TestCase):
         sw2.serialize(orig, typecode=tc2, typed=False)
         s2 = str(sw2)
 
-        print s1
-        print s2
+#        print s1
+#        print s2
         self.failUnless(s1 == s2,
             'reserved characters used for reserved purpose should not be escaped.')
 

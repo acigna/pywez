@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-import unittest, time, datetime
+
+import time
+import unittest
+from cStringIO import StringIO
+
 import ZSI 
 from ZSI.writer import SoapWriter
 from ZSI import _get_element_nsuri_name
 from ZSI.schema import GED, TypeDefinition, ElementDeclaration
 from ZSI.parse import ParsedSoap
-from cStringIO import StringIO
-
 
 class TestList1_Def(ZSI.TC.List, TypeDefinition):
     itemType = (u'http://www.w3.org/2001/XMLSchema', u'dateTime')
@@ -15,14 +17,12 @@ class TestList1_Def(ZSI.TC.List, TypeDefinition):
     def __init__(self, pname, **kw):
         ZSI.TC.List.__init__(self, pname, **kw)
 
-
 class TestList2_Def(ZSI.TC.List, TypeDefinition):
     itemType = ZSI.TC.gDateTime()
     schema = "urn:test"
     type = (schema, "tUsage")
     def __init__(self, pname, **kw):
         ZSI.TC.List.__init__(self, pname, **kw)
-
 
 class ListTestCase(unittest.TestCase):
     "test List TypeCode"
@@ -44,7 +44,7 @@ class ListTestCase(unittest.TestCase):
                 sw = SoapWriter()
                 sw.serialize(data, typecode)
                 s = str(sw)
-                print s
+                #print s
                 ps = ParsedSoap(s); pyobj = ps.Parse(typecode)
                 assert pyobj == data, 'Data corruption expected "%s", got "%s"' %(str(data),str(pyobj))
                 if data is None: 
@@ -56,7 +56,6 @@ class ListTestCase(unittest.TestCase):
                 # 
                 utc = list(time.gmtime(i)[:-3]) + [999,0,0] 
                 data.append(tuple(utc))
-
 
 def makeTestSuite():
     suite = unittest.TestSuite()

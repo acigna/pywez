@@ -1,5 +1,13 @@
 #!/usr/bin/env python
-import unittest, sys, sha, base64
+
+import base64
+import unittest
+try:
+    from hashlib import sha1 as local_sha
+except ImportError:
+    import sha1 as local_sha
+import sys
+
 from ZSI import _get_element_nsuri_name
 from ZSI.parse import ParsedSoap
 from ZSI.wstools.c14n import Canonicalize
@@ -25,8 +33,8 @@ class CanonicalizeFromTestCase(unittest.TestCase):
         s = StringIO()
         Canonicalize(self.el, s, unsuppressedPrefixes=None)
         cxml = s.getvalue()
-        d1 = base64.encodestring(sha.sha(C14N_INC1).digest()).strip()
-        d2 = base64.encodestring(sha.sha(cxml).digest()).strip()
+        d1 = base64.encodestring(local_sha(C14N_INC1).digest()).strip()
+        d2 = base64.encodestring(local_sha(cxml).digest()).strip()
         self.assertEqual(d1, d2)
         self.assertEqual(d1, C14N_INC1_DIGEST)
 
@@ -36,8 +44,8 @@ class CanonicalizeFromTestCase(unittest.TestCase):
         s = StringIO()
         Canonicalize(self.el, s, unsuppressedPrefixes=[])
         cxml = s.getvalue()
-        d1 = base64.encodestring(sha.sha(C14N_EXCL1).digest()).strip()
-        d2 = base64.encodestring(sha.sha(cxml).digest()).strip()
+        d1 = base64.encodestring(local_sha(C14N_EXCL1).digest()).strip()
+        d2 = base64.encodestring(local_sha(cxml).digest()).strip()
         self.assertEqual(d1, C14N_EXCL1_DIGEST)
         self.assertEqual(d1, d2)
 
@@ -50,8 +58,8 @@ class CanonicalizeFromTestCase(unittest.TestCase):
         s = StringIO()
         Canonicalize(self.el, s, unsuppressedPrefixes=['xsi', 'xsd'])
         cxml = s.getvalue()
-        d1 = base64.encodestring(sha.sha(C14N_EXCL2).digest()).strip()
-        d2 = base64.encodestring(sha.sha(cxml).digest()).strip()
+        d1 = base64.encodestring(local_sha(C14N_EXCL2).digest()).strip()
+        d2 = base64.encodestring(local_sha(cxml).digest()).strip()
         self.assertEqual(d1, C14N_EXCL2_DIGEST)
         self.assertEqual(d1, d2)
 
@@ -67,9 +75,9 @@ class CanonicalizeFromTestCase(unittest.TestCase):
         s = StringIO()
         Canonicalize(self.el, s, unsuppressedPrefixes=[])
         cxml = s.getvalue()
-        print cxml
-        d1 = base64.encodestring(sha.sha(C14N_EXCL3).digest()).strip()
-        d2 = base64.encodestring(sha.sha(cxml).digest()).strip()
+        #print cxml
+        d1 = base64.encodestring(local_sha(C14N_EXCL3).digest()).strip()
+        d2 = base64.encodestring(local_sha(cxml).digest()).strip()
         self.assertEqual(d1, C14N_EXCL3_DIGEST)
         self.assertEqual(d1, d2)
 
@@ -77,8 +85,8 @@ class CanonicalizeFromTestCase(unittest.TestCase):
         RCVDIGEST = "jhTbi7gWlY9oLqsRr+EZ0bokRFA="
         CALDIGEST = "IkMyI4zCDlK41qE7sZxvkFHJioU="
 
-        d1 = base64.encodestring(sha.sha(WRONG).digest()).strip()
-        d2 = base64.encodestring(sha.sha(CORRECT).digest()).strip()
+        d1 = base64.encodestring(local_sha(WRONG).digest()).strip()
+        d2 = base64.encodestring(local_sha(CORRECT).digest()).strip()
 
         ps = ParsedSoap(XML_INST4)
         el = filter(lambda el: _get_element_nsuri_name(el) == (WSA200403.ADDRESS, "MessageID"), 
@@ -87,10 +95,10 @@ class CanonicalizeFromTestCase(unittest.TestCase):
         s = StringIO()
         Canonicalize(el, s, unsuppressedPrefixes=[])
         cxml = s.getvalue()
-        print "-- "*20
-        print cxml
-        print "-- "*20
-        d3 = base64.encodestring(sha.sha(cxml).digest()).strip()
+#        print "-- "*20
+#        print cxml
+#        print "-- "*20
+        d3 = base64.encodestring(local_sha(cxml).digest()).strip()
 
         self.assertEqual(d1, RCVDIGEST)
         self.assertEqual(d2, CALDIGEST)

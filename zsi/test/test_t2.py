@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-import unittest, sys
-from ZSI import *
+
+import sys
+import unittest
+
+from ZSI import TC, ParsedSoap, ParseException, FaultFromZSIException, FaultFromException, SoapWriter
 
 
 class t2TestCase(unittest.TestCase):
@@ -40,8 +43,9 @@ class t2TestCase(unittest.TestCase):
             import operator 
             total = reduce(operator.add, player.Scores, 0)
             result = Average(foo(total, len(player.Scores)))
-            sw = SoapWriter().serialize(result) 
-            print >>OUT, str(sw)
+            sw = SoapWriter().serialize(result)
+            str(sw) 
+            #print >>OUT, str(sw)
         except Exception, e: 
             print >>OUT, FaultFromException(e, 0, sys.exc_info()[2]).AsSOAP() 
             self.fail()

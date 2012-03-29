@@ -2,11 +2,14 @@
 # $Header$
 '''Utilities for HTTP Digest Authentication
 '''
-import re
-from md5 import md5
-import random
-import time
 import httplib
+import random
+import re
+import time
+try:
+    from hashlib import md5
+except ImportError:
+    from md5 import md5
 
 random.seed(int(time.time()*10))
 

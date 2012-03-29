@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # vim: sts=4 sw=4 et
 
-import unittest, sys, tests_good, tests_bad, time, os
-from ZSI import *
+import os
+import time
+import unittest
+
+from ZSI import TC
 try:
     import cStringIO as StringIO
 except ImportError:

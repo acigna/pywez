@@ -1,16 +1,15 @@
 #!/usr/bin/env python
-import unittest, multifile, mimetools
-from ZSI import *
-from ZSI import resolvers
-from xml.dom import Node
-#from xml.dom.ext.reader import PyExpat
-from ZSI.parse import DefaultReader as Reader
 
-
+import mimetools
+import unittest
 try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
+
+from ZSI import resolvers
+from ZSI.parse import DefaultReader as Reader
+
 
 class t5TestCase(unittest.TestCase):
     "Test case wrapper for old ZSI t5 test case"
@@ -21,11 +20,11 @@ class t5TestCase(unittest.TestCase):
         if  m.gettype()[0:10] == "multipart/":
             cid = resolvers.MIMEResolver(m['content-type'], istr)
             xml = cid.GetSOAPPart()
-            print 'xml=', xml.getvalue()
-            for h,b in cid.parts:
-                print h, b.read()
+            #print 'xml=', xml.getvalue()
+#            for h,b in cid.parts:
+#                print h, b.read()
             dom = Reader.fromStream(xml)
-            print dom
+            #print dom
 
 def makeTestSuite():
     suite = unittest.TestSuite()

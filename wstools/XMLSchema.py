@@ -111,7 +111,7 @@ class SchemaReader:
         reader.loadDocument(file)
         schema = XMLSchema()
         if url is not None:
-             schema.setBaseUrl(url)
+            schema.setBaseUrl(url)
         schema.load(reader)
         self.__setIncludes(schema)
         self.__setImports(schema)
